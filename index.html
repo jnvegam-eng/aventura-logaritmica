@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦊 Aventura Logarítmica</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap');
+*{box-sizing:border-box}
+:root{
+  --pink:#ff4f9a;--purple:#7657ff;--blue:#22a8f5;--cyan:#42d9ff;
+  --green:#40cf79;--yellow:#ffc83d;--ink:#18245c;--cream:#fffaf4;
+}
+body{margin:0;font-family:"Baloo 2",system-ui,sans-serif;color:var(--ink);background:
+ radial-gradient(circle at 10% 10%,#fff 0 5%,transparent 6%),
+ linear-gradient(135deg,#7de9ff 0%,#b8f4ff 42%,#d9c8ff 100%);min-height:100vh;overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;border-radius:50%;filter:blur(2px);z-index:-1}
+body:before{width:260px;height:260px;background:#ffd4ee;left:-90px;top:30%}
+body:after{width:340px;height:340px;background:#d7ffc6;right:-120px;bottom:4%}
+button{font:inherit;cursor:pointer;border:0}
+.app{max-width:1250px;margin:auto;padding:18px}
+.top{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.logo{background:linear-gradient(135deg,var(--purple),#b83cff);color:white;padding:15px 22px;border-radius:26px;box-shadow:0 10px 0 #5035ba;transform:rotate(-1deg)}
+.logo .small{font-size:17px}.logo h1{margin:0;font-size:38px;line-height:.9;text-shadow:3px 3px 0 #4d35a9}
+.stats{display:flex;gap:12px;flex-wrap:wrap}
+.stat{background:#fff;border:4px solid #fff;box-shadow:0 7px 0 #c9c7e7;border-radius:22px;padding:10px 18px;min-width:130px;text-align:center}
+.stat b{display:block;font-size:26px}.stat span{font-size:14px}
+.layout{display:grid;grid-template-columns:190px 1fr;gap:18px;margin-top:20px}
+.sidebar{display:flex;flex-direction:column;gap:11px}
+.nav{color:white;border-radius:18px;padding:12px 16px;font-weight:800;font-size:18px;box-shadow:0 6px 0 rgba(24,36,92,.2);transition:.15s}
+.nav:hover{transform:translateY(-3px)}.nav.active{outline:4px solid white}
+.n1{background:linear-gradient(135deg,#ff4f9a,#ff76c0)}.n2{background:linear-gradient(135deg,#7354ff,#9a75ff)}
+.n3{background:linear-gradient(135deg,#149de9,#35c8ff)}.n4{background:linear-gradient(135deg,#ffb817,#ffd34d)}
+.n5{background:linear-gradient(135deg,#31bd6d,#6de493)}
+.mascot{margin-top:auto;background:#fff9;border:3px solid #fff;padding:12px;border-radius:24px;text-align:center}
+.fox{font-size:74px;animation:bob 2s infinite ease-in-out}@keyframes bob{50%{transform:translateY(-7px)}}
+.game{background:#ffffffd9;border:4px solid white;border-radius:32px;padding:22px;box-shadow:0 14px 35px #4653a344;min-height:610px}
+.levelbar{display:flex;align-items:center;gap:12px;background:#edf0ff;border-radius:20px;padding:10px 14px;margin-bottom:15px}
+.levelname{font-weight:800;min-width:170px}.progress{height:14px;background:#d5d8ee;border-radius:20px;overflow:hidden;flex:1}
+.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff51a0,#8d62ff,#28c8f5);border-radius:20px;transition:.5s}
+.content{max-width:850px;margin:auto}.badge{display:inline-block;background:#fff0b5;color:#8a6200;padding:5px 12px;border-radius:30px;font-weight:800}
+h2{font-size:31px;margin:8px 0}.question{background:linear-gradient(135deg,#8c5bff,#cf61e9);color:white;border-radius:22px;padding:18px;text-align:center;box-shadow:0 7px 0 #6842bf}
+.question .formula{font-size:42px;font-weight:800;background:white;color:var(--ink);border-radius:18px;padding:14px;margin:12px 0}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.answer{background:#fff;border:4px solid #e5e8ff;border-radius:18px;padding:14px;font-size:22px;font-weight:800;color:var(--ink);box-shadow:0 6px 0 #d8daf0;transition:.15s}
+.answer:hover{transform:translateY(-3px);border-color:#9b8cff}
+.answer.correct{background:#c9f8da;border-color:#43ce78;box-shadow:0 6px 0 #2b9d58}
+.answer.wrong{background:#ffd1df;border-color:#ff5a88;box-shadow:0 6px 0 #d23c67}
+.feedback{min-height:52px;margin-top:15px;padding:10px 16px;border-radius:16px;font-size:18px;font-weight:700;text-align:center}
+.tip{background:#fff6cf;border:3px solid #ffd85a;border-radius:17px;padding:12px;margin-top:15px}
+.controls{display:flex;justify-content:space-between;gap:12px;margin-top:17px}.mainbtn{background:linear-gradient(135deg,#ff4f9a,#8a5cff);color:white;padding:12px 25px;border-radius:18px;font-size:19px;font-weight:800;box-shadow:0 6px 0 #5b43c5}.mainbtn:disabled{opacity:.45;cursor:not-allowed}
+.secondary{background:#edf0ff;color:var(--ink);box-shadow:0 5px 0 #cbd0ea}
+.screen{display:none}.screen.show{display:block}
+.home{text-align:center;padding:50px 20px}.home h2{font-size:48px}.bigfox{font-size:120px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:25px 0}.card{background:#fff;padding:20px;border-radius:22px;box-shadow:0 7px 0 #d9d9ef}.card b{font-size:23px}
+.theory{display:grid;grid-template-columns:1fr 1fr;gap:15px}.theory .card{font-size:17px}.example{background:#f0eaff;border-left:8px solid #7657ff}
+.final{text-align:center;padding:45px 15px}.trophy{font-size:95px}.scorebig{font-size:58px;color:#7657ff}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:repeat(2,1fr)}.mascot{display:none}.answers,.theory,.cards{grid-template-columns:1fr}.logo h1{font-size:29px}.question .formula{font-size:31px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="logo"><div class="small">🦊 Misión matemática</div><h1>AVENTURA<br>LOGARÍTMICA</h1></div>
+    <div class="stats">
+      <div class="stat">⭐ <b id="score">0</b><span>Puntos</span></div>
+      <div class="stat">❤️ <b id="lives">3</b><span>Vidas</span></div>
+      <div class="stat">🔥 <b id="streak">0</b><span>Racha</span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <button class="nav n1 active" onclick="showHome()">🏠 Inicio</button>
+      <button class="nav n2" onclick="startGame()">🎮 Jugar</button>
+      <button class="nav n3" onclick="showTheory()">📚 Teoría</button>
+      <button class="nav n4" onclick="showInfo('ranking')">🏆 Ranking</button>
+      <button class="nav n5" onclick="showInfo('mission')">🌟 Mi misión</button>
+      <div class="mascot"><div class="fox">🦊</div><b>¡Hola, explorador!</b><br>Yo te acompañaré por el mundo de los logaritmos.</div>
+    </aside>
+
+    <main class="game">
+      <section id="home" class="screen show home">
+        <div class="bigfox">🦊✨</div>
+        <h2>¡Bienvenido a la Aventura Logarítmica!</h2>
+        <p style="font-size:21px">Resuelve desafíos, gana estrellas y desbloquea los secretos de las funciones logarítmicas.</p>
+        <div class="cards">
+          <div class="card">🧠<br><b>Aprende</b><br>Conceptos y propiedades.</div>
+          <div class="card">🎯<br><b>Desafía</b><br>Preguntas de dificultad creciente.</div>
+          <div class="card">🏆<br><b>Conquista</b><br>Consigue la mayor puntuación.</div>
+        </div>
+        <button class="mainbtn" onclick="startGame()">🚀 ¡COMENZAR AVENTURA!</button>
+      </section>
+
+      <section id="game" class="screen">
+        <div class="levelbar"><div class="levelname" id="levelName">Nivel 1</div><div class="progress"><i id="progress"></i></div><b id="counter">1/10</b></div>
+        <div class="content">
+          <span class="badge" id="topic">🌱 Conceptos básicos</span>
+          <h2 id="questionTitle">¡Abre la primera puerta!</h2>
+          <div class="question"><div id="questionText">Pregunta</div><div class="formula" id="formula">log₂(x) = 3</div></div>
+          <div class="answers" id="answers"></div>
+          <div id="feedback" class="feedback"></div>
+          <div class="tip">💡 <b>Pista:</b> <span id="tip">Recuerda que logₐ(x)=b significa que aᵇ=x.</span></div>
+          <div class="controls">
+            <button class="mainbtn secondary" onclick="showHome()">🏠 Salir</button>
+            <button id="nextBtn" class="mainbtn" onclick="nextQuestion()" disabled>Siguiente ➜</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="theory" class="screen">
+        <div class="content">
+          <span class="badge">📚 Mini guía</span><h2>Los secretos del logaritmo</h2>
+          <div class="theory">
+            <div class="card"><b>🔑 Definición</b><p>logₐ(x)=b significa que <b>aᵇ=x</b>.</p><div class="example">Ejemplo: log₂(8)=3 porque 2³=8.</div></div>
+            <div class="card"><b>📌 Dominio</b><p>En una función logarítmica, el argumento debe ser positivo: <b>x &gt; 0</b>.</p></div>
+            <div class="card"><b>📈 Crecimiento</b><p>Si <b>a &gt; 1</b>, la función crece. Si <b>0 &lt; a &lt; 1</b>, decrece.</p></div>
+            <div class="card"><b>✨ Propiedad del producto</b><p>logₐ(MN)=logₐ(M)+logₐ(N).</p></div>
+            <div class="card"><b>➗ Propiedad del cociente</b><p>logₐ(M/N)=logₐ(M)−logₐ(N).</p></div>
+            <div class="card"><b>💎 Potencia</b><p>logₐ(Mᵖ)=p·logₐ(M).</p></div>
+          </div>
+          <button class="mainbtn" onclick="startGame()">🎮 ¡Practicar ahora!</button>
+        </div>
+      </section>
+
+      <section id="info" class="screen">
+        <div class="home"><div class="bigfox">🌟</div><h2 id="infoTitle"></h2><p id="infoText" style="font-size:21px"></p><button class="mainbtn" onclick="startGame()">🚀 Volver a jugar</button></div>
+      </section>
+
+      <section id="final" class="screen final">
+        <div class="trophy">🏆✨</div><h2>¡Aventura completada!</h2>
+        <div class="scorebig" id="finalScore">0</div><p style="font-size:22px" id="finalText"></p>
+        <p>⭐ Cada desafío que resolviste te hizo más fuerte en matemáticas.</p>
+        <button class="mainbtn" onclick="startGame()">🔄 Jugar otra vez</button>
+        <button class="mainbtn secondary" onclick="showTheory()">📚 Repasar teoría</button>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+const questions=[
+ {topic:"🌱 Conceptos básicos",title:"La puerta de las potencias",q:"¿Cuál es el valor de x?",f:"log₂(x) = 3",a:["6","8","3","2"],c:1,t:"Piensa: 2 elevado a 3, ¿cuánto da?"},
+ {topic:"🌱 Conceptos básicos",title:"El mapa secreto",q:"Convierte a forma exponencial:",f:"log₃(81) = 4",a:["3⁴ = 81","4³ = 81","81⁴ = 3","3⁸ = 4"],c:0,t:"La base se convierte en base y el resultado pasa a exponente."},
+ {topic:"🎯 Dominio",title:"El puente del dominio",q:"¿Cuál es el dominio de f(x)=log₅(x−2)?",f:"x − 2 > 0",a:["x > 2","x < 2","x ≥ 2","Todos los reales"],c:0,t:"El argumento de un logaritmo siempre debe ser positivo."},
+ {topic:"📈 Gráficas",title:"El bosque creciente",q:"Para f(x)=log₂(x), ¿qué ocurre con la función?",f:"a = 2",a:["Es creciente","Es decreciente","Es constante","No existe"],c:0,t:"Cuando la base es mayor que 1, la función logarítmica crece."},
+ {topic:"📈 Gráficas",title:"La cueva misteriosa",q:"¿Cuál es la asíntota vertical de f(x)=log₃(x−4)?",f:"f(x)=log₃(x−4)",a:["x = 4","x = −4","y = 4","y = −4"],c:0,t:"La asíntota aparece donde el argumento se hace 0."},
+ {topic:"✨ Propiedades",title:"El cofre del producto",q:"Simplifica:",f:"log₂(8·4)",a:["log₂8 + log₂4","log₂8 − log₂4","log₂(8+4)","2log₂12"],c:0,t:"El logaritmo de un producto se transforma en suma."},
+ {topic:"✨ Propiedades",title:"La poción de la potencia",q:"Simplifica:",f:"log₅(25³)",a:["3·log₅25","25·log₅3","log₅25 + 3","3 + log₅25"],c:0,t:"El exponente puede salir multiplicando al logaritmo."},
+ {topic:"🧩 Ecuaciones",title:"La torre escondida",q:"Resuelve:",f:"log₃(x) = 2",a:["6","9","3","12"],c:1,t:"Pasa a forma exponencial: 3² = x."},
+ {topic:"🧩 Ecuaciones",title:"El portal final",q:"Resuelve:",f:"log₁₀(x) = 4",a:["40","100","1000","10000"],c:3,t:"La base 10 elevada al resultado te da x."},
+ {topic:"🏁 Desafío final",title:"¡El dragón logarítmico!",q:"Si log₂(x)+log₂(4)=5, ¿cuánto vale x?",f:"log₂(x)+2 = 5",a:["4","6","8","16"],c:2,t:"Primero resta 2: log₂(x)=3."}
+];
+let idx=0,score=0,lives=3,streak=0,answered=false;
+function hide(){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("show"))}
+function showHome(){hide();document.getElementById("home").classList.add("show")}
+function showTheory(){hide();document.getElementById("theory").classList.add("show")}
+function showInfo(type){hide();document.getElementById("info").classList.add("show");let t=document.getElementById("infoTitle"),p=document.getElementById("infoText");if(type==="ranking"){t.textContent="🏆 Ranking de aventureros";p.textContent="Tu puntuación se calcula con aciertos y rachas. ¡Supera tu propio récord!"}else{t.textContent="🌟 Tu misión";p.textContent="Domina la definición, dominio, gráficas, propiedades y ecuaciones logarítmicas."}}
+function updateStats(){document.getElementById("score").textContent=score;document.getElementById("lives").textContent=lives;document.getElementById("streak").textContent=streak}
+function startGame(){idx=0;score=0;lives=3;streak=0;answered=false;hide();document.getElementById("game").classList.add("show");render()}
+function render(){
+ if(idx>=questions.length){finish();return}
+ const x=questions[idx];answered=false;
+ document.getElementById("levelName").textContent=`Nivel ${Math.floor(idx/3)+1} · ${x.title}`;
+ document.getElementById("progress").style.width=`${idx/questions.length*100}%`;
+ document.getElementById("counter").textContent=`${idx+1}/${questions.length}`;
+ document.getElementById("topic").textContent=x.topic;
+ document.getElementById("questionTitle").textContent=x.title;
+ document.getElementById("questionText").textContent=x.q;
+ document.getElementById("formula").textContent=x.f;
+ document.getElementById("tip").textContent=x.t;
+ document.getElementById("feedback").textContent="";
+ document.getElementById("feedback").style.background="";
+ document.getElementById("nextBtn").disabled=true;
+ const box=document.getElementById("answers");box.innerHTML="";
+ x.a.forEach((ans,i)=>{let b=document.createElement("button");b.className="answer";b.innerHTML=`${String.fromCharCode(65+i)}) ${ans}`;b.onclick=()=>answer(i,b);box.appendChild(b)});
+ updateStats();
+}
+function answer(choice,btn){
+ if(answered)return;answered=true;const x=questions[idx], all=document.querySelectorAll(".answer");all.forEach(b=>b.disabled=true);
+ if(choice===x.c){btn.classList.add("correct");streak++;score+=100+streak*20;document.getElementById("feedback").textContent=`🎉 ¡Correcto! +${100+streak*20} puntos. ¡Racha de ${streak}!`;document.getElementById("feedback").style.background="#d8ffe5"}
+ else{btn.classList.add("wrong");all[x.c].classList.add("correct");lives--;streak=0;document.getElementById("feedback").textContent=`💫 Casi. La respuesta era ${x.a[x.c]}. ¡Sigue intentando!`;document.getElementById("feedback").style.background="#ffe4ed"}
+ updateStats();document.getElementById("nextBtn").disabled=false;
+}
+function nextQuestion(){if(lives<=0){finish(true);return}idx++;render()}
+function finish(lost=false){hide();document.getElementById("final").classList.add("show");document.getElementById("finalScore").textContent=`${score} ⭐`;document.getElementById("finalText").textContent=lost?"Te quedaste sin vidas, pero cada error es una oportunidad para aprender.":"¡Completaste todos los desafíos!";updateStats()}
+updateStats();
+</script>
+</body>
+</html>
